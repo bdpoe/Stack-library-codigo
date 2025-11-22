@@ -1,3 +1,4 @@
+// server/controllers/task.controllers.js
 import { pool } from "../db.js";
 //trycatch para evitar los errores
 
@@ -17,7 +18,6 @@ export const getTask = async (req, res) => {
     const [result] = await pool.query("SELECT * FROM task WHERE id = ?", [
       req.params.id,
     ]);
-    //parte emocionantes error 404
     if (result.length === 0)
       return res.status(404).json({ message: "task not found" });
 
@@ -29,16 +29,31 @@ export const getTask = async (req, res) => {
 
 export const createTasks = async (req, res) => {
   try {
-    const { title, description } = req.body; //recopilacion de dato -
+    const { title, description } = req.body;
+
+    // 🔥 VALIDACIÓN BACKEND: no permitir campos vacíos
+    if (!title || !title.trim()) {
+      return res.status(400).json({ message: "El título es obligatorio." });
+    }
+
+    if (!description || !description.trim()) {
+      return res
+        .status(400)
+        .json({ message: "La descripción es obligatoria." });
+    }
+
+    const cleanTitle = title.trim();
+    const cleanDescription = description.trim();
+
     const [result] = await pool.query(
-      "INSERT INTO task(title, description) VALUES (?,?)",
-      [title, description]
+      "INSERT INTO task(title, description) VALUES (?, ?)",
+      [cleanTitle, cleanDescription]
     );
-    // como lo esta entregando
+
     res.json({
       id: result.insertId,
-      title,
-      description,
+      title: cleanTitle,
+      description: cleanDescription,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

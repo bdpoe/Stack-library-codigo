@@ -1,25 +1,31 @@
-import { useEffect,  } from "react";
+import { useEffect } from "react";
 import Taskcard from "../components/TaskCard";
 import { useTasks } from "../context/TaskProvider";
 
 function TasksPage() {  
-const {tasks, loadTasks} = useTasks();
+  const {tasks, loadTasks} = useTasks();
 
   useEffect(() => {
     loadTasks();
-
   }, []);
 
   function renderMain() {
-    if (tasks.length ===0) return <h1> no task yet  </h1>
-   return tasks.map((task) => <Taskcard task={task} key={task.id} />);
+    if (tasks.length === 0)
+      return (
+        <h1 className="text-center text-slate-500 text-lg font-medium mt-10">
+          Aún no hay libros en la biblioteca 📚
+        </h1>
+      );
+    return tasks.map((task) => <Taskcard task={task} key={task.id} />);
   }
 
   return (
     <div>
-      <h1 className="text-5xl text-white font-bold text-center " >BIBLIOTECA</h1>
-      <div className="grid grid-cols-3 gap-2 " >
-              {renderMain()}
+      <h1 className="text-4xl md:text-5xl text-sky-700 font-extrabold text-center mb-8 tracking-wide drop-shadow-sm">
+        BIBLIOTECA
+      </h1>
+      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
+        {renderMain()}
       </div>
     </div>
   );
